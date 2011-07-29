@@ -24,6 +24,8 @@
 @synthesize passButton;
 @synthesize resignButton;
 @synthesize messageButton;
+@synthesize prevButton;
+@synthesize nextButton;
 @synthesize messageView;
 
 /*
@@ -69,6 +71,8 @@
 	[[self confirmButton] setEnabled:[self.board canSubmit]];
 	[[self passButton] setEnabled:[self.board canPassOrResign]];
 	[[self resignButton] setEnabled:[self.board canPassOrResign]];
+	[[self prevButton] setEnabled:[self.board canGoPrev]];
+	[[self nextButton] setEnabled:[self.board canGoNext]];
 	[[self boardView] setNeedsDisplay]; // show just placed move
 }
 
@@ -171,6 +175,16 @@
 	[self updateBoard];
 }
 
+- (IBAction)prev {
+	[self.board goPrev];
+	[self updateBoard];
+}
+
+- (IBAction)next {
+	[self.board goNext];
+	[self updateBoard];
+}
+
 - (IBAction)resign {
 	[self.board resign];
 	[self updateBoard];
@@ -261,6 +275,8 @@
 	self.zoomOutButton = nil;
 	self.confirmButton = nil;
 	self.passButton = nil;
+	self.prevButton = nil;
+	self.nextButton = nil;
 	self.resignButton = nil;
 	self.messageButton = nil;
 	self.messageView = nil;

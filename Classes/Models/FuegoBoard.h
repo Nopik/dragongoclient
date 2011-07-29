@@ -67,6 +67,8 @@
 - (bool)playStoneAtRow:(int)row column:(int)col;
 - (bool)markDeadStonesAtRow:(int)row column:(int)col;
 - (void)pass;
+- (void)goPrev;
+- (void)goNext;
 - (void)resign;
 
 // NO if the game has a handicap and the handicap stones have just been placed
@@ -84,6 +86,8 @@
 - (bool)gameEnded;
 
 - (bool)canUndo;
+- (bool)canGoPrev;
+- (bool)canGoNext;
 - (bool)canPlayMove;
 - (bool)canPassOrResign;
 - (bool)canSubmit;

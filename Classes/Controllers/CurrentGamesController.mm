@@ -22,6 +22,8 @@
 
 @synthesize games;
 @synthesize refreshButton;
+@synthesize finishedButton;
+@synthesize currentButton;
 @synthesize gameTableView;
 @synthesize logoutButton;
 @synthesize selectedCell;
@@ -35,9 +37,8 @@
 
 
 - (void)viewDidLoad {
-	self.title = @"Your Move";
 	self.navigationItem.leftBarButtonItem = self.logoutButton;
-	self.navigationItem.rightBarButtonItem = self.refreshButton;
+	[self currentGames];
 	[super viewDidLoad];
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -100,11 +101,15 @@
 - (void)setEnabled:(BOOL)enabled {
 	if (enabled) {
 		[[self refreshButton] setEnabled:YES];
+		[[self currentButton] setEnabled:YES];
+		[[self finishedButton] setEnabled:YES];
 		[[self logoutButton] setEnabled:YES];
 		[[self gameTableView] setUserInteractionEnabled:YES];
 	} else {
 		[[self refreshButton] setEnabled:NO];
 		[[self logoutButton] setEnabled:NO];
+		[[self currentButton] setEnabled:NO];
+		[[self finishedButton] setEnabled:NO];
 		[[self gameTableView] setUserInteractionEnabled:NO];
 	}
 }
@@ -169,6 +174,19 @@
     [newGameViewController release];
 }
 
+- (IBAction)finishedGames {
+	self.title = @"Old games";
+	self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.refreshButton, self.currentButton, nil];
+	[DGSAppDelegate invalidateThrottle];
+	[self refreshFinishedGames];
+}
+
+- (IBAction)currentGames {
+	self.title = @"Your Move";
+	self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.refreshButton, self.finishedButton, nil];
+	[self refreshGamesWithThrottling];
+}
+
 - (IBAction)refreshGames {
 	[DGSAppDelegate resetThrottle];
 	
@@ -205,6 +223,27 @@
             [[self gameTableView] reloadData];
         }
 
+		[self setEnabled:YES];
+	}];
+}
+
+- (IBAction)refreshFinishedGames {
+	[self showSpinnerInView:self.navigationController.view message:@"Reloading..."];
+	[self setEnabled:NO];
+	[self.gs getFinishedGames:^(NSArray *currentGames) {
+		self.games = currentGames;
+		
+		[self hideSpinner:YES];
+		[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[self.games count]];
+		
+		if ([self.games count] == 0) {
+			self.view = self.noGamesView;
+		} else {
+			self.view = self.gameListView;
+			[self buildTableCells];
+			[[self gameTableView] reloadData];
+		}
+		
 		[self setEnabled:YES];
 	}];
 }
@@ -270,6 +309,8 @@
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
 	self.refreshButton = nil;
+	self.finishedButton = nil;
+	self.currentButton = nil;
 	self.gameTableView = nil;
 	self.logoutButton = nil;
 	self.selectedCell = nil;

@@ -370,6 +370,14 @@ static bool fuegoInitialized = NO;
 	goGame->AddMove(SG_PASS, goGame->Board().ToPlay());
 }
 
+- (void)goPrev {
+	goGame->GoInDirection(SgNode::PREVIOUS);
+}
+
+- (void)goNext {
+	goGame->GoInDirection(SgNode::NEXT);
+}
+
 - (void)resign {
 	// resigns are special because they aren't supported by fuego
 	Move *currentMove = [[Move alloc] init];
@@ -453,6 +461,24 @@ static bool fuegoInitialized = NO;
 		return YES;
 	}
 	return NO;
+}
+
+- (bool)canGoNext {
+	if ([self gameEnded]) {
+		return NO;
+	} else if (self.resignMove) {
+		return NO;
+	}
+	return goGame->CanGoInDirection(SgNode::NEXT);
+}
+
+- (bool)canGoPrev {
+	if ([self gameEnded]) {
+		return NO;
+	} else if (self.resignMove) {
+		return NO;
+	}
+	return goGame->CanGoInDirection(SgNode::PREVIOUS);
 }
 
 - (bool)canSubmit {
