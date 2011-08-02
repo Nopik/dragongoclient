@@ -17,6 +17,7 @@
 	IBOutlet UIToolbar *bottomToolbar;
 	IBOutlet UIBarButtonItem *refreshButton;
 	IBOutlet UIBarButtonItem *logoutButton;
+	IBOutlet UIBarButtonItem *finishedButton;
 	IBOutlet UITableView *gameTableView;
 	UITableViewCell *selectedCell;
 	UIAlertView *logoutConfirmation;
@@ -29,6 +30,7 @@
 @property(nonatomic, retain) IBOutlet UIToolbar *bottomToolbar;
 @property(nonatomic, retain) IBOutlet UIBarButtonItem *refreshButton;
 @property(nonatomic, retain) IBOutlet UIBarButtonItem *logoutButton;
+@property(nonatomic, retain) IBOutlet UIBarButtonItem *finishedButton;
 @property(nonatomic, retain) IBOutlet UITableView *gameTableView;
 @property(nonatomic, retain) UITableViewCell *selectedCell;
 @property(nonatomic, retain) UIAlertView *logoutConfirmation;
@@ -41,6 +43,7 @@
 // Refresh games list unconditionally
 - (IBAction)refreshGames;
 - (IBAction)logout;
+- (IBAction)finishedGames;
 - (IBAction)startNewGame;
 
 - (void)gotSgfForGame:(Game *)game;
