@@ -226,7 +226,7 @@
 	}];
 }
 
-- (void)getFinishedGames:(void (^)(NSArray *gameList))onSuccess {
+- (void)getFinishedGames:(void (^)(GameList *gameList))onSuccess {
 /*	NSURL *url = [self URLWithPath:@"/show_games.php?finished=1&uid=62485"];
 	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
 	[request setCachePolicy:ASIDoNotReadFromCacheCachePolicy];
@@ -560,34 +560,35 @@
             }
                 
             Game *game = [[Game alloc] init];
-            
-            for(int i = 0; i < [tableHeaders count]; i++) {
+
+					for(int i = 0; i < [tableHeaders count]; i++) {
                 NSString *headerName = [tableHeaders objectAtIndex:i];
+						CXMLNode *td = [columns objectAtIndex:i];
                 if ([headerName isEqual:@"ID"]) {
-                    CXMLNode *td = [columns objectAtIndex:i];
                     NSString *data = [[[td nodesForXPath:@"a" error:&error] objectAtIndex:0] stringValue];
                     game.gameId = [data integerValue];
                 } else if ([headerName isEqual:@"Opponent"]) {
-                    CXMLNode *td = [columns objectAtIndex:i];
                     NSString *data = [[[td nodesForXPath:@"a/font" error:&error] objectAtIndex:0] stringValue];
                     game.opponent = [data stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
                 } else if ([headerName isEqual:@"sgf"]) {
-                    CXMLNode *td = [columns objectAtIndex:i];
                     NSString *data = [NSString stringWithFormat:@"/%@", [[[td nodesForXPath:@"a/@href" error:&error] objectAtIndex:0] stringValue]];
                     game.sgfUrl = [self URLWithPath:data];
                 } else if ([headerName isEqual:@"Time remaining"]) {
-                    CXMLNode *td = [columns objectAtIndex:i];
                     NSString *data = [td stringValue];
                     game.time = data;
                 }  else if ([headerName isEqual:@"Col"]) {
-                    CXMLNode *td = [columns objectAtIndex:i];
                     NSString *data = [[[td nodesForXPath:@"img/@alt" error:&error] objectAtIndex:0] stringValue];
                     if ([data isEqual:@"b"]) {
                         game.color = kMovePlayerBlack;
                     } else {
                         game.color = kMovePlayerWhite;
                     }
-                }
+                }  else if ([headerName isEqual:@"Rating"]) {
+											game.opponentRating = [[[[td nodesForXPath:@"a" error:&error] lastObject] stringValue] stringByReplacingOccurrencesOfString:@";" withString:@" "];                
+								}  else if ([headerName isEqual:@"Score"]) {
+									game.score = [td stringValue];                
+								}
+
             }
             
             [games addObject:game];

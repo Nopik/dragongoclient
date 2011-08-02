@@ -2,6 +2,7 @@
 #import "FinishedGamesController.h"
 #import "JoinWaitingRoomGameController.h"
 #import "AddGameViewController.h"
+#import "Move.h"
 
 @implementation FinishedGamesController
 
@@ -34,7 +35,7 @@
     row.cellSetup = ^(UITableViewCell *cell) {
         NSString *ratingString = game.opponentRating ? game.opponentRating : @"Not Ranked";
         [[cell textLabel] setText:[NSString stringWithFormat:@"%@ - %@", game.opponent, ratingString]];
-			//[[cell detailTextLabel] setText:[NSString stringWithFormat:@"%dx%d", game.boardSize, game.boardSize]];
+			[[cell detailTextLabel] setText:[NSString stringWithFormat:@"%@, %@", (game.color==kMovePlayerBlack) ? @"Black" : @"White", game.score]];
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     };
     row.cellTouched = ^(UITableViewCell *cell) {

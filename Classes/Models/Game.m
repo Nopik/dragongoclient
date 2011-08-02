@@ -23,6 +23,7 @@
 @synthesize opponentRating;
 @synthesize handicap;
 @synthesize komi;
+@synthesize score;
 
 - (void)dealloc {
 	self.detailUrl = nil;
@@ -30,6 +31,7 @@
 	[sgfUrl release];
 	[opponent release];
 	[time release];
+	[score release];
 	self.opponentRating = nil;
 	[super dealloc];
 }

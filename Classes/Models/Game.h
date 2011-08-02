@@ -22,6 +22,7 @@
 	MovePlayer color;
     int handicap;
     float komi;
+	NSString * score;
 }
 
 @property(nonatomic, retain) NSURL * sgfUrl;
@@ -34,5 +35,6 @@
 @property(nonatomic) MovePlayer color;
 @property(nonatomic, assign) int handicap;
 @property(nonatomic, assign) float komi;
+@property(nonatomic, copy) NSString * score;
 
 @end
