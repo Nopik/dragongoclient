@@ -12,6 +12,7 @@
 #import "LoginViewController.h"
 #import "DGSPhoneAppDelegate.h"
 #import "NewGameViewController.h"
+#import "FinishedGamesController.h"
 
 
 #if defined (CONFIGURATION_Adhoc)
@@ -173,8 +174,11 @@
 }
 
 - (IBAction)finishedGames {
-	[DGSAppDelegate invalidateThrottle];
-	[self refreshFinishedGames];
+	//[DGSAppDelegate invalidateThrottle];
+	//[self refreshFinishedGames];
+	FinishedGamesController *finishedGamesViewController = [[FinishedGamesController alloc] initWithNibName:@"FinishedGamesView" bundle:nil];
+	[self.navigationController pushViewController:finishedGamesViewController animated:YES];
+	[finishedGamesViewController release];
 }
 
 - (IBAction)refreshGames {

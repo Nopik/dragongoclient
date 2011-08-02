@@ -12,6 +12,8 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		549EDFC313E888DA00F48058 /* FinishedGamesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 549EDFC213E888DA00F48058 /* FinishedGamesView.xib */; };
+		549EDFC713E88A0F00F48058 /* FinishedGamesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 549EDFC613E88A0F00F48058 /* FinishedGamesController.m */; };
 		DA02D13D11D99BF000A9D887 /* NewGame.m in Sources */ = {isa = PBXBuildFile; fileRef = DA02D13C11D99BF000A9D887 /* NewGame.m */; };
 		DA02D13E11D99BF000A9D887 /* NewGame.m in Sources */ = {isa = PBXBuildFile; fileRef = DA02D13C11D99BF000A9D887 /* NewGame.m */; };
 		DA02D14D11D99D7600A9D887 /* TableCellFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DA02D14C11D99D7600A9D887 /* TableCellFactory.m */; };
@@ -491,6 +493,9 @@
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* DGSPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DGSPhone_Prefix.pch; sourceTree = "<group>"; };
+		549EDFC213E888DA00F48058 /* FinishedGamesView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FinishedGamesView.xib; sourceTree = "<group>"; };
+		549EDFC513E88A0F00F48058 /* FinishedGamesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinishedGamesController.h; sourceTree = "<group>"; };
+		549EDFC613E88A0F00F48058 /* FinishedGamesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FinishedGamesController.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* DGSPhone-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DGSPhone-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		DA02D13B11D99BF000A9D887 /* NewGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewGame.h; sourceTree = "<group>"; };
 		DA02D13C11D99BF000A9D887 /* NewGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewGame.m; sourceTree = "<group>"; };
@@ -1522,6 +1527,8 @@
 				DA38B1F811B59F2F00112AA4 /* LoginViewController.mm */,
 				DA419D4311BB2DA400B3050E /* CurrentGamesController.h */,
 				DA419D4411BB2DA400B3050E /* CurrentGamesController.mm */,
+				549EDFC513E88A0F00F48058 /* FinishedGamesController.h */,
+				549EDFC613E88A0F00F48058 /* FinishedGamesController.m */,
 				DAF9105C11BB5BBD00FE7B96 /* GameViewController.h */,
 				DAF9105D11BB5BBD00FE7B96 /* GameViewController.mm */,
 				DA5218D312CF9EF500000147 /* WaitingRoomGamesController.h */,
@@ -1762,6 +1769,7 @@
 				DA94CBDC124839740060FD44 /* AddGameView.xib */,
 				DAE0D24C13BAD41A00668CB2 /* NewGameViewController.xib */,
 				DA94CBDD124839740060FD44 /* CurrentGamesView.xib */,
+				549EDFC213E888DA00F48058 /* FinishedGamesView.xib */,
 				DA94CBDE124839740060FD44 /* GameView.xib */,
 				DA94CBDF124839740060FD44 /* LoginView.xib */,
 				DA94CBE0124839740060FD44 /* MainWindow.xib */,
@@ -2191,6 +2199,7 @@
 				DAA80F9113B42C3700E5E2B5 /* Black@2x.png in Resources */,
 				DAA80F9213B42C3700E5E2B5 /* White@2x.png in Resources */,
 				DAE0D24E13BAD41A00668CB2 /* NewGameViewController.xib in Resources */,
+				549EDFC313E888DA00F48058 /* FinishedGamesView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2275,6 +2284,7 @@
 				DA0762B71377B678003E0390 /* DGSDev.m in Sources */,
 				DAE0D24D13BAD41A00668CB2 /* NewGameViewController.m in Sources */,
 				DA8E707C13D5337E007E569B /* GameList.m in Sources */,
+				549EDFC713E88A0F00F48058 /* FinishedGamesController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
