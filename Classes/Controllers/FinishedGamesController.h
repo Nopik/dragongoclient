@@ -9,9 +9,11 @@
 
 @interface FinishedGamesController : JWTableViewController {
     UIView *noGamesView;
+		UIView *gamesView;
 }
 
 @property (nonatomic, retain) IBOutlet UIView *noGamesView;
+@property (nonatomic, retain) IBOutlet UIView *gamesView;
 
 - (void)setGames:(GameList *)gameList;
 

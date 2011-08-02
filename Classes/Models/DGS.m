@@ -58,6 +58,10 @@
 	// or error.php (in the case where the error is not_logged_in)
 	BOOL onErrorPageOrIndex = (NSNotFound != [urlString rangeOfString:@"error.php?err=not_logged_in"].location || NSNotFound != [urlString rangeOfString:@"index.php"].location);
 	
+	//TODO: mine out the current uid, list of finished games will need it. xpath: .//table[@id=pageLinks]/tr/td(first)/a@href(parse out parameter).
+	//Or take 3rd link as-is and use it for getFinishedGames url, instead of hardcoding 'finished=1'.
+	//Or even take link with 'finished' in its text ;)
+	
 	// If we're using the DGS api, it will return the string 'Error: no_uid' or 'Error: not_logged_in' if we aren't logged in.
 	BOOL noUID = (NSNotFound != [responseString rangeOfString:@"#Error: no_uid"].location);
 	BOOL notLoggedIn = (NSNotFound != [responseString rangeOfString:@"#Error: not_logged_in"].location);
@@ -218,6 +222,36 @@
 	
 	[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
 		NSArray *gameList = [self gamesFromCSV:responseString];
+		onSuccess(gameList);
+	}];
+}
+
+- (void)getFinishedGames:(void (^)(NSArray *gameList))onSuccess {
+/*	NSURL *url = [self URLWithPath:@"/show_games.php?finished=1&uid=62485"];
+	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+	[request setCachePolicy:ASIDoNotReadFromCacheCachePolicy];
+	
+	[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
+		NSArray *gameList = [self gamesFromTable:responseString];
+		onSuccess(gameList);
+	}];
+ */
+	GameList *gameList = [[[GameList alloc] initWithPageLoader:^(GameList *gameList, NSString *pagePath, void (^onSuccess)()) {
+		NSURL *url = [self URLWithPath:pagePath];
+		ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+		[request setCachePolicy:ASIDoNotReadFromCacheCachePolicy];
+		
+		[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
+			[gameList appendGames:[self gamesFromFinishedGamesTable:responseString]];
+			gameList.nextPagePath = [self nextPagePath:responseString];
+			onSuccess();
+		}];
+	}] autorelease];
+	
+	// add=9 to force the time limit to show up
+	gameList.nextPagePath = @"/show_games.php?finished=1&uid=62485";
+	
+	[gameList loadNextPage:^(GameList *gameList) {
 		onSuccess(gameList);
 	}];
 }
@@ -466,6 +500,11 @@
 	return games;
 }
 
+- (NSArray *)gamesFromFinishedGamesTable:(NSString *)htmlString {
+	//TODO: pass 'finished' parameter here, so we know correct xpath.
+	return [self gamesFromTable:htmlString];
+}
+
 // Parses a list of games from the table on the 'status' page of 
 // Dragon Go Server. This works, and provides a lot more information
 // than quick_status's comma separated data. Unfortunately, the table 
@@ -477,24 +516,39 @@
 - (NSArray *)gamesFromTable:(NSString *)htmlString {
 	NSMutableArray *games = [NSMutableArray array];
 	NSError *error;
-	CXMLDocument *doc = [[CXMLDocument alloc] initWithXMLString:htmlString options:CXMLDocumentTidyHTML error:&error];
-	NSArray *tableRows = [doc nodesForXPath:@"//table[@id='gameTable']/tr" error:&error];
+	
+	//Nopik: dirty shortcuts here. We rely on the fact that finished game list is paginated (for my user :D).
+	CXMLDocument *doc = [[CXMLDocument alloc] initWithXMLString:[htmlString stringByReplacingOccurrencesOfString:@"&nbsp" withString:@""] options:CXMLDocumentTidyHTML error:&error];
+	NSArray *tableRows = [doc nodesForXPath:@"//table[@id='finishedTable']/tr" error:&error];
 
     if ([tableRows count] > 0) {
 	
-        // First row is the header
-        CXMLNode *headerRow = [tableRows objectAtIndex:0];
+        // First row (just after pagination...) is the header
+        CXMLNode *headerRow = [tableRows objectAtIndex:1];
         NSArray *columns = [headerRow nodesForXPath:@".//span[@class='Header']" error:&error];
         
         NSMutableArray *tableHeaders = [NSMutableArray arrayWithCapacity:[columns count]];
         for (CXMLNode *column in columns) {
-            [tableHeaders addObject:[column stringValue]];
+					NSString *sv = [column stringValue];
+					if( sv == nil )
+					{
+						NSArray *links = [column nodesForXPath:@".//a" error:&error];
+						if( (links != nil) && ([links count] == 1) )
+						{
+							sv = [[links objectAtIndex:0] stringValue];
+						}
+						else
+						{
+							sv = @"";
+						}
+					}
+            [tableHeaders addObject:sv];
         }
         
-        // trim the header row
+        // trim the header row & table filter & pagination rows
         NSRange range;
-        range.location = 1;
-        range.length = [tableRows count] - 1;
+        range.location = 3;
+        range.length = [tableRows count] - 4;
         
         for (CXMLNode *row in [tableRows subarrayWithRange:range]) {
             
@@ -519,7 +573,7 @@
                     game.opponent = [data stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
                 } else if ([headerName isEqual:@"sgf"]) {
                     CXMLNode *td = [columns objectAtIndex:i];
-                    NSString *data = [[[td nodesForXPath:@"a/@href" error:&error] objectAtIndex:0] stringValue];
+                    NSString *data = [NSString stringWithFormat:@"/%@", [[[td nodesForXPath:@"a/@href" error:&error] objectAtIndex:0] stringValue]];
                     game.sgfUrl = [self URLWithPath:data];
                 } else if ([headerName isEqual:@"Time remaining"]) {
                     CXMLNode *td = [columns objectAtIndex:i];

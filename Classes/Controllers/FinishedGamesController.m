@@ -6,6 +6,7 @@
 @implementation FinishedGamesController
 
 @synthesize noGamesView;
+@synthesize gamesView;
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -33,7 +34,7 @@
     row.cellSetup = ^(UITableViewCell *cell) {
         NSString *ratingString = game.opponentRating ? game.opponentRating : @"Not Ranked";
         [[cell textLabel] setText:[NSString stringWithFormat:@"%@ - %@", game.opponent, ratingString]];
-        [[cell detailTextLabel] setText:[NSString stringWithFormat:@"%dx%d | %@", game.boardSize, game.boardSize, game.time]];
+			//[[cell detailTextLabel] setText:[NSString stringWithFormat:@"%dx%d", game.boardSize, game.boardSize]];
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     };
     row.cellTouched = ^(UITableViewCell *cell) {
@@ -92,6 +93,11 @@
         [mainSection release];
         self.tableSections = sections;
         [self.tableView reloadData];
+			
+			if( self.view != self.gamesView )
+			{
+				self.view = self.gamesView;
+			}
     }
 }
 
@@ -104,7 +110,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     if (!self.tableSections) {
-        self.view = self.noGamesView;
+			       self.view = self.noGamesView;
     }
 }
 
@@ -133,6 +139,7 @@
 
 - (void)dealloc {
     self.noGamesView = nil;
+		self.gamesView = nil;
     [super dealloc];
 }
 

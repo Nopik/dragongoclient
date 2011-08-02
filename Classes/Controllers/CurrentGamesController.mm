@@ -174,11 +174,19 @@
 }
 
 - (IBAction)finishedGames {
-	//[DGSAppDelegate invalidateThrottle];
-	//[self refreshFinishedGames];
+	[self showSpinnerInView:self.navigationController.view message:@"Loading ..."];
+	[self setEnabled:NO];
+	
 	FinishedGamesController *finishedGamesViewController = [[FinishedGamesController alloc] initWithNibName:@"FinishedGamesView" bundle:nil];
 	[self.navigationController pushViewController:finishedGamesViewController animated:YES];
 	[finishedGamesViewController release];
+
+	[self.gs getFinishedGames:^(NSArray *finishedGames) {
+		[self hideSpinner:YES];
+		[self setEnabled:YES];
+		[finishedGamesViewController setGames:finishedGames];
+	}];
+
 }
 
 - (IBAction)refreshGames {

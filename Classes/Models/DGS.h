@@ -20,11 +20,14 @@ typedef void (^ASIHTTPRequestBlock)(ASIHTTPRequest *request, NSString *responseS
 
 @interface DGS : NSObject {
 	id <LoginProtocol> delegate;
+	NSString *finishedUrl;
+	
 #ifndef LOGIC_TEST_MODE
     UIAlertView *errorView;
 #endif
 }
 
+@property(nonatomic, retain) NSString *finishedUrl;
 @property(nonatomic, assign) id <LoginProtocol> delegate;
 
 
@@ -41,6 +44,7 @@ typedef void (^ASIHTTPRequestBlock)(ASIHTTPRequest *request, NSString *responseS
 - (void)addGame:(NewGame *)game onSuccess:(void (^)())onSuccess;
 - (void)getCurrentGames:(void (^)(NSArray *gameList))onSuccess;
 - (void)getSgfForGame:(Game *)game onSuccess:(void (^)(Game *game))onSuccess;
+- (void)getFinishedGames:(void (^)(GameList *gameList))onSuccess;
 - (void)getWaitingRoomGames:(void (^)(GameList *gameList))onSuccess;
 - (void)getWaitingRoomGameDetailsForGame:(NewGame *)game onSuccess:(void (^)(NewGame *game))onSuccess;
 - (void)joinWaitingRoomGame:(int)gameId comment:(NSString *)comment onSuccess:(void (^)())onSuccess;
@@ -62,6 +66,7 @@ typedef void (^ASIHTTPRequestBlock)(ASIHTTPRequest *request, NSString *responseS
 - (NSArray *)gamesFromCSV:(NSString *)csvData;
 - (NSArray *)gamesFromTable:(NSString *)htmlString;
 - (NSArray *)gamesFromWaitingRoomTable:(NSString *)htmlString;
+- (NSArray *)gamesFromFinishedGamesTable:(NSString *)htmlString;
 - (NSString *)nextPagePath:(NSString *)htmlString;
 - (NewGame *)gameFromWaitingRoomDetailTable:(NSString *)htmlString game:(NewGame *)game;
 @end
