@@ -52,16 +52,17 @@
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     };
     row.cellTouched = ^(UITableViewCell *cell) {
-			//self.selectedCell = cell;
         UIActivityIndicatorView *activityView = 
         [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [activityView startAnimating];
         [cell setAccessoryView:activityView];
         [activityView release];
 			if (game.sgfString) {
+				[cell setAccessoryView:nil];
 				[self gotSgfForGame:game];
 			} else {
 				[self.gs getSgfForGame:game onSuccess:^(Game *game) {
+					[cell setAccessoryView:nil];
 					[self gotSgfForGame:game];
 				}];
 			}

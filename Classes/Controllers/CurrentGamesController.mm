@@ -181,7 +181,7 @@
 	[self.navigationController pushViewController:finishedGamesViewController animated:YES];
 	[finishedGamesViewController release];
 
-	[self.gs getFinishedGames:^(NSArray *finishedGames) {
+	[self.gs getFinishedGames:^(GameList *finishedGames) {
 		[self hideSpinner:YES];
 		[self setEnabled:YES];
 		[finishedGamesViewController setGames:finishedGames];

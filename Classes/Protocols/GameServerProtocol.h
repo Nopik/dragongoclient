@@ -25,6 +25,7 @@
 - (void)getCurrentGames:(void (^)(NSArray *gameList))onSuccess;
 - (void)getSgfForGame:(Game *)game onSuccess:(void (^)(Game *game))onSuccess;
 - (void)getWaitingRoomGames:(void (^)(GameList *gameList))onSuccess;
+- (void)getFinishedGames:(void (^)(GameList *gameList))onSuccess;
 - (void)getWaitingRoomGameDetailsForGame:(NewGame *)game onSuccess:(void (^)(NewGame *game))onSuccess;
 - (void)joinWaitingRoomGame:(int)gameId comment:(NSString *)comment onSuccess:(void (^)())onSuccess;
 - (void)deleteWaitingRoomGame:(int)gameId onSuccess:(void (^)())onSuccess;

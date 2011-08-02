@@ -20,6 +20,7 @@
 @implementation DGS
 
 @synthesize delegate;
+@synthesize finishedUrl;
 
 #ifndef LOGIC_TEST_MODE
 @synthesize errorView;
@@ -517,15 +518,23 @@
 	NSMutableArray *games = [NSMutableArray array];
 	NSError *error;
 	
-	//Nopik: dirty shortcuts here. We rely on the fact that finished game list is paginated (for my user :D).
+	//Nopik: dirty shortcuts here.
 	CXMLDocument *doc = [[CXMLDocument alloc] initWithXMLString:[htmlString stringByReplacingOccurrencesOfString:@"&nbsp" withString:@""] options:CXMLDocumentTidyHTML error:&error];
 	NSArray *tableRows = [doc nodesForXPath:@"//table[@id='finishedTable']/tr" error:&error];
 
     if ([tableRows count] > 0) {
 	
-        // First row (just after pagination...) is the header
-        CXMLNode *headerRow = [tableRows objectAtIndex:1];
+			BOOL paginated = FALSE;
+			
+        // First row (sometimes just after pagination...) is the header
+			CXMLNode *headerRow = [tableRows objectAtIndex:0];
         NSArray *columns = [headerRow nodesForXPath:@".//span[@class='Header']" error:&error];
+
+			if( [columns count] == 0 )
+			{
+				paginated = TRUE;
+				columns = [[tableRows objectAtIndex:1] nodesForXPath:@".//span[@class='Header']" error:&error];
+			}
         
         NSMutableArray *tableHeaders = [NSMutableArray arrayWithCapacity:[columns count]];
         for (CXMLNode *column in columns) {
@@ -547,8 +556,13 @@
         
         // trim the header row & table filter & pagination rows
         NSRange range;
+			if( paginated == TRUE ) {
         range.location = 3;
         range.length = [tableRows count] - 4;
+			} else {
+        range.location = 2;
+        range.length = [tableRows count] - 2;
+			}
         
         for (CXMLNode *row in [tableRows subarrayWithRange:range]) {
             
