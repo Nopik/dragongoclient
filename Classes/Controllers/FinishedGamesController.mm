@@ -35,8 +35,8 @@
 	[gameViewController setGame:game];
 	[self.navigationController pushViewController:gameViewController animated:YES];
 	[gameViewController release];
-	[self.selectedCell setAccessoryView:nil];
-	self.selectedCell = nil;
+	//	[self.selectedCell setAccessoryView:nil];
+	//self.selectedCell = nil;
 }
 
 - (void)addGame:(NewGame *)game toSection:(TableSection *)section {
@@ -52,7 +52,7 @@
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     };
     row.cellTouched = ^(UITableViewCell *cell) {
-			self.selectedCell = cell;
+			//self.selectedCell = cell;
         UIActivityIndicatorView *activityView = 
         [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [activityView startAnimating];
