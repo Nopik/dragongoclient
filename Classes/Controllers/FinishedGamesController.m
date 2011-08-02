@@ -3,6 +3,7 @@
 #import "JoinWaitingRoomGameController.h"
 #import "AddGameViewController.h"
 #import "Move.h"
+#import "GameViewController.h"
 
 @implementation FinishedGamesController
 
@@ -26,6 +27,18 @@
 }
 */
 
+- (void)gotSgfForGame:(Game *)game {
+	// Navigation logic may go here. Create and push another view controller.
+	GameViewController *gameViewController = [[GameViewController alloc] initWithNibName:@"GameView" bundle:nil];
+	// ...
+	// Pass the selected object to the new view controller.
+	[gameViewController setGame:game];
+	[self.navigationController pushViewController:gameViewController animated:YES];
+	[gameViewController release];
+	[self.selectedCell setAccessoryView:nil];
+	self.selectedCell = nil;
+}
+
 - (void)addGame:(NewGame *)game toSection:(TableSection *)section {
     TableRow *row = [[TableRow alloc] init];
     row.cellClass = [UITableViewCell class];
@@ -39,11 +52,19 @@
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     };
     row.cellTouched = ^(UITableViewCell *cell) {
+			self.selectedCell = cell;
         UIActivityIndicatorView *activityView = 
         [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [activityView startAnimating];
         [cell setAccessoryView:activityView];
         [activityView release];
+			if (game.sgfString) {
+				[self gotSgfForGame:game];
+			} else {
+				[self.gs getSgfForGame:game onSuccess:^(Game *game) {
+					[self gotSgfForGame:game];
+				}];
+			}
     };
     [section addRow:row];
     [row release];

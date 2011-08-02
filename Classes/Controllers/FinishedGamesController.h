@@ -16,5 +16,6 @@
 @property (nonatomic, retain) IBOutlet UIView *gamesView;
 
 - (void)setGames:(GameList *)gameList;
+- (void)gotSgfForGame:(Game *)game;
 
 @end
