@@ -20,7 +20,7 @@
 @implementation DGS
 
 @synthesize delegate;
-@synthesize finishedUrl;
+@synthesize uid;
 
 #ifndef LOGIC_TEST_MODE
 @synthesize errorView;
@@ -41,6 +41,7 @@
 
 - (id)init {
 	if (self = [super init]) {
+		uid = nil;
 		 [ASIHTTPRequest setDefaultTimeOutSeconds:15];
 	}
 	return self;
@@ -58,10 +59,6 @@
 	// can figure out if the user is logged in by checking if we ended up on index.php
 	// or error.php (in the case where the error is not_logged_in)
 	BOOL onErrorPageOrIndex = (NSNotFound != [urlString rangeOfString:@"error.php?err=not_logged_in"].location || NSNotFound != [urlString rangeOfString:@"index.php"].location);
-	
-	//TODO: mine out the current uid, list of finished games will need it. xpath: .//table[@id=pageLinks]/tr/td(first)/a@href(parse out parameter).
-	//Or take 3rd link as-is and use it for getFinishedGames url, instead of hardcoding 'finished=1'.
-	//Or even take link with 'finished' in its text ;)
 	
 	// If we're using the DGS api, it will return the string 'Error: no_uid' or 'Error: not_logged_in' if we aren't logged in.
 	BOOL noUID = (NSNotFound != [responseString rangeOfString:@"#Error: no_uid"].location);
@@ -212,6 +209,7 @@
 	[request setPostValue:username forKey:@"userid"];
 	[request setPostValue:password forKey:@"passwd"];
 	[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
+		JWLog(@"logged in: %@", responseString );
 		[self.delegate loggedIn];
 	}];
 }
@@ -228,32 +226,25 @@
 }
 
 - (void)getFinishedGames:(void (^)(GameList *gameList))onSuccess {
-/*	NSURL *url = [self URLWithPath:@"/show_games.php?finished=1&uid=62485"];
-	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-	[request setCachePolicy:ASIDoNotReadFromCacheCachePolicy];
-	
-	[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
-		NSArray *gameList = [self gamesFromTable:responseString];
-		onSuccess(gameList);
-	}];
- */
-	GameList *gameList = [[[GameList alloc] initWithPageLoader:^(GameList *gameList, NSString *pagePath, void (^onSuccess)()) {
-		NSURL *url = [self URLWithPath:pagePath];
-		ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-		[request setCachePolicy:ASIDoNotReadFromCacheCachePolicy];
+	[self ensureUid:^() {
+		GameList *gameList = [[[GameList alloc] initWithPageLoader:^(GameList *gameList, NSString *pagePath, void (^onSuccess)()) {
+			NSURL *url = [self URLWithPath:pagePath];
+			ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+			[request setCachePolicy:ASIDoNotReadFromCacheCachePolicy];
+			
+			[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
+				[gameList appendGames:[self gamesFromFinishedGamesTable:responseString]];
+				gameList.nextPagePath = [self nextPagePath:responseString];
+				onSuccess();
+			}];
+		}] autorelease];
 		
-		[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
-			[gameList appendGames:[self gamesFromFinishedGamesTable:responseString]];
-			gameList.nextPagePath = [self nextPagePath:responseString];
-			onSuccess();
+		// add=9 to force the time limit to show up
+		gameList.nextPagePath = [NSString stringWithFormat:@"/show_games.php?finished=1&uid=%@", self.uid];
+		
+		[gameList loadNextPage:^(GameList *gameList) {
+			onSuccess(gameList);
 		}];
-	}] autorelease];
-	
-	// add=9 to force the time limit to show up
-	gameList.nextPagePath = @"/show_games.php?finished=1&uid=62485";
-	
-	[gameList loadNextPage:^(GameList *gameList) {
-		onSuccess(gameList);
 	}];
 }
 
@@ -316,6 +307,33 @@
 	}];
 }
 
+-(void)ensureUid:(void(^)())onSuccess {
+	if( self.uid == nil ) {
+		ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[self URLWithPath:@"/status.php"]];
+		[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
+			//JWLog(@"status: %@", responseString );
+			CXMLDocument *doc = [[CXMLDocument alloc] initWithXMLString:[responseString stringByReplacingOccurrencesOfString:@"&nbsp" withString:@""] options:CXMLDocumentTidyHTML error:NULL];
+			if( doc != nil ) {
+				NSArray *linkElements = [doc nodesForXPath:@"//table[@id='pageLinks']/tr/td/a" error:NULL];
+				if ([linkElements count] > 0) {
+					NSString *link = [[[linkElements objectAtIndex:0] attributeForName:@"href"] stringValue];
+					
+					if( link != nil )
+					{
+						NSRange range = [link rangeOfString:@"uid="];
+						if( range.location != NSNotFound )
+						{
+							self.uid = [link substringFromIndex:range.location+4];
+							onSuccess();
+						}
+					}
+				}
+			}
+		}];
+	} else {
+		onSuccess();
+	}
+}
 - (void)getSgfForGame:(Game *)game onSuccess:(void (^)(Game *game))onSuccess {
 	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:game.sgfUrl];
 	[self performRequest:request onSuccess:^(ASIHTTPRequest *request, NSString *responseString) {
@@ -872,6 +890,7 @@
 #ifndef LOGIC_TEST_MODE
     self.errorView = nil;
 #endif
+	self.uid = nil;
     [super dealloc];
 }
 

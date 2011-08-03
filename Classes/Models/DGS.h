@@ -20,14 +20,15 @@ typedef void (^ASIHTTPRequestBlock)(ASIHTTPRequest *request, NSString *responseS
 
 @interface DGS : NSObject {
 	id <LoginProtocol> delegate;
-	NSString *finishedUrl;
+	
+	NSString *uid;
 	
 #ifndef LOGIC_TEST_MODE
     UIAlertView *errorView;
 #endif
 }
 
-@property(nonatomic, retain) NSString *finishedUrl;
+@property(nonatomic, retain) NSString *uid;
 @property(nonatomic, assign) id <LoginProtocol> delegate;
 
 
@@ -60,6 +61,7 @@ typedef void (^ASIHTTPRequestBlock)(ASIHTTPRequest *request, NSString *responseS
 
 #endif
 
+-(void)ensureUid:(void(^)())onSuccess;
 - (NSString *)sgfCoordsWithRow:(int)row column:(int)col boardSize:(int)boardSize;
 
 // Internal, but these have to be exposed so the logic tests can hit them

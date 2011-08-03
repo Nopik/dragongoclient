@@ -229,28 +229,6 @@
 	}];
 }
 
-- (IBAction)refreshFinishedGames {
-/*	[self showSpinnerInView:self.navigationController.view message:@"Reloading..."];
-	[self setEnabled:NO];
-	[self.gs getFinishedGames:^(NSArray *currentGames) {
-		self.games = currentGames;
-		
-		[self hideSpinner:YES];
-		[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[self.games count]];
-		
-		if ([self.games count] == 0) {
-			self.view = self.noGamesView;
-		} else {
-			self.view = self.gameListView;
-			[self buildTableCells];
-			[[self gameTableView] reloadData];
-		}
-		
-		[self setEnabled:YES];
-	}];
- */
-}
-
 - (void)requestCancelled {
 	[self hideSpinner:NO];
 	[self.selectedCell setAccessoryView:nil];
