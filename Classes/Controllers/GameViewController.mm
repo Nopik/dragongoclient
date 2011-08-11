@@ -26,15 +26,12 @@
 @synthesize messageButton;
 @synthesize messageView;
 
-/*
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
+			gameFinishedMode = false;
     }
     return self;
 }
-*/
 
 /*
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
@@ -54,10 +51,19 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+	if( gameFinishedMode == true ) {
+		[[self confirmButton] setEnabled:NO];
+		[[self passButton] setEnabled:NO];
+		[[self resignButton] setEnabled:NO];
+	}
 	UIScrollView *tempScrollView=(UIScrollView *)self.scrollView;
     tempScrollView.contentSize=CGSizeMake(self.boardView.bounds.size.height, self.boardView.bounds.size.width);
 	currentZoomScale = 1.0;
 	self.navigationItem.title = [NSString stringWithFormat:@"vs. %@", [game opponent]];
+}
+
+-(void)setGameFinishedMode{
+	gameFinishedMode = true;
 }
 
 - (void)updateBoard {
@@ -66,9 +72,11 @@
 	} else {
 		[self.navigationItem setRightBarButtonItem:nil animated:YES];
 	}
-	[[self confirmButton] setEnabled:[self.board canSubmit]];
-	[[self passButton] setEnabled:[self.board canPassOrResign]];
-	[[self resignButton] setEnabled:[self.board canPassOrResign]];
+	if( gameFinishedMode == false ) {
+		[[self confirmButton] setEnabled:[self.board canSubmit]];
+		[[self passButton] setEnabled:[self.board canPassOrResign]];
+		[[self resignButton] setEnabled:[self.board canPassOrResign]];
+	}
 	[[self boardView] setNeedsDisplay]; // show just placed move
 }
 

@@ -33,6 +33,7 @@ enum BoardState {
 	float maximumZoomScale;
 	float minimumZoomScale;
 	float currentZoomScale;
+	bool gameFinishedMode;
 }
 
 @property(nonatomic, retain) Game *game;
@@ -54,6 +55,8 @@ enum BoardState {
 - (IBAction)pass;
 - (IBAction)resign;
 - (IBAction)showMessageWindow;
+
+-(void)setGameFinishedMode;
 
 @end
 

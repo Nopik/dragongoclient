@@ -30,6 +30,7 @@
 - (void)gotSgfForGame:(Game *)game {
 	// Navigation logic may go here. Create and push another view controller.
 	GameViewController *gameViewController = [[GameViewController alloc] initWithNibName:@"GameView" bundle:nil];
+	[gameViewController setGameFinishedMode];
 	// ...
 	// Pass the selected object to the new view controller.
 	[gameViewController setGame:game];
