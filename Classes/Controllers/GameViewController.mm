@@ -25,6 +25,8 @@
 @synthesize resignButton;
 @synthesize messageButton;
 @synthesize messageView;
+@synthesize analyzeToolbar;
+@synthesize mainToolbar;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
@@ -56,6 +58,8 @@
 		[[self passButton] setEnabled:NO];
 		[[self resignButton] setEnabled:NO];
 	}
+	self.mainToolbar.hidden = FALSE;
+	self.analyzeToolbar.hidden = TRUE;
 	UIScrollView *tempScrollView=(UIScrollView *)self.scrollView;
     tempScrollView.contentSize=CGSizeMake(self.boardView.bounds.size.height, self.boardView.bounds.size.width);
 	currentZoomScale = 1.0;
@@ -184,6 +188,16 @@
 	[self updateBoard];
 }
 
+- (IBAction)enterAnalyzeMode{
+	self.mainToolbar.hidden = TRUE;
+	self.analyzeToolbar.hidden = FALSE;
+	
+}
+- (IBAction)leaveAnalyzeMode{
+	self.mainToolbar.hidden = FALSE;
+	self.analyzeToolbar.hidden = TRUE;
+}
+
 - (IBAction)showMessageWindow {
 	[self.navigationController.view addSubview:self.messageView];
 	[self.messageView show:^(BOOL hasMessage) {
@@ -272,6 +286,8 @@
 	self.resignButton = nil;
 	self.messageButton = nil;
 	self.messageView = nil;
+	self.analyzeToolbar = nil;
+	self.mainToolbar = nil;
     [super viewDidUnload];
 }
 

@@ -28,6 +28,8 @@ enum BoardState {
 	IBOutlet UIBarButtonItem *passButton;
 	IBOutlet UIBarButtonItem *resignButton;
 	IBOutlet UIBarButtonItem *messageButton;
+	IBOutlet UIToolbar *analyzeToolbar;
+	IBOutlet UIToolbar *mainToolbar;
 	IBOutlet MessageView *messageView;
 	BoardState boardState;
 	float maximumZoomScale;
@@ -48,6 +50,8 @@ enum BoardState {
 @property(nonatomic, retain) IBOutlet UIBarButtonItem *resignButton;
 @property(nonatomic, retain) IBOutlet UIBarButtonItem *messageButton;
 @property(nonatomic, retain) IBOutlet MessageView *messageView;
+@property(nonatomic, retain) IBOutlet UIToolbar *analyzeToolbar;
+@property(nonatomic, retain) IBOutlet UIToolbar *mainToolbar;
 
 - (IBAction)undoMove;
 - (IBAction)zoomOut;
@@ -55,6 +59,8 @@ enum BoardState {
 - (IBAction)pass;
 - (IBAction)resign;
 - (IBAction)showMessageWindow;
+- (IBAction)enterAnalyzeMode;
+- (IBAction)leaveAnalyzeMode;
 
 -(void)setGameFinishedMode;
 
